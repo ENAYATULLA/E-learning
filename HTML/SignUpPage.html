@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up</title>
+    <link rel="stylesheet" type="text/css" href="../CSS/LoginPage.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js"></script>
+    <!-- Firebase Configuration -->
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOZEpNxh-gxv76v0Z9sxvfX6U7O0Kl1-g",
+            authDomain: "e-learning-88b42.firebaseapp.com",
+            projectId: "e-learning-88b42",
+            storageBucket: "e-learning-88b42.appspot.com",
+            messagingSenderId: "126699648294",
+            appId: "1:126699648294:web:f6d44b185a6daa126dbde7",
+            measurementId: "G-RNMKCYZVR7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Function to handle form submission
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('signUpForm').addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    // Create user with Firebase Authentication
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+
+                    // Store additional user information in Firestore
+                    await db.collection('users').doc(user.uid).set({
+                        email: user.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Redirect to HomePage
+                    window.location.href = 'HomePage.html';
+                } catch (error) {
+                    console.error('Error signing up:', error);
+                    alert('Sign Up failed: ' + error.message);
+                }
+            });
+        });
+    </script>
+</head>
+<body class="login">
+    <div class="logo">
+        <a href="">
+            <img src="../Image/logoo.png"/>
+        </a> 
+    </div>
+    <div class="content">
+        <form class="login-form" id="signUpForm">
+            <h3 class="form-title">Sign Up</h3>
+            <p style="color:#8290a3;">Enter your personal details below:</p>
+            
+            <label for="email">Email/Username</label>
+            <input class="form-control" type="email" id="email" name="email" required>
+            
+            <label for="password">Password</label>
+            <input class="form-control" type="password" id="password" name="password" required>
+            
+            <div class="form-actions">
+                <button class="btn-blue" type="submit">SIGN UP</button>
+            </div>
+            <div class="create-account">
+                <p>
+                    <a href="LoginPage.html">Already have an account? Log In</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
